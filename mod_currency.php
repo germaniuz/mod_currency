@@ -134,8 +134,4 @@ curl_multi_close($mh);
 
 
 require(JmoduleHelper::getLayoutPath('mod_currency'));
-
-
-
-
 ?>
