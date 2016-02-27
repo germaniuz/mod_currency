@@ -7,6 +7,7 @@ $urls = array(
   'https://query.yahooapis.com/v1/public/yql?q=select%20DaysLow%20from%20yahoo.finance.quote%20where%20symbol%20in%20(%22BZM16.NYM%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback='
 );
 $cache = 'cache/rates.cache';
+$cache_old = 'cache/oldrates.cache';
 
 function data_request($urls, $cache){
   $ch1 = curl_init();
@@ -65,21 +66,32 @@ function read_data($cache){
   return $data;
 }
 
+
 if(file_exists($cache)){
   $live_time = time() - fileatime($cache);
 };
-if(file_exists($cache) && $live_time > 43200){
+if(file_exists($cache) && $live_time > 2){
+  copy($cache, $cache_old);
   data_request($urls, $cache);
   $data = read_data($cache);
+  $data_old = read_data($cache_old);
 } else {
   $data = read_data($cache);
+  $data_old = read_data($cache_old);
 }
+
+
 
 $usd_rate = substr($data[0]->query->results->rate[0]->Rate, 0, -2);
 $eur_rate = substr($data[0]->query->results->rate[1]->Rate, 0, -2);
-
 $temperature = round(($data[1]->query->results->channel->item->condition->temp - 32) / 1.8);
 $oil = $data[2]->query->results->quote->DaysLow;
+
+$usd_diff = 0;
+$eur_diff = 0;
+$oil_diff = 0;
+
+
 
 require(JmoduleHelper::getLayoutPath('mod_currency'));
 ?>
