@@ -65,8 +65,15 @@ function read_data($cache){
   return $data;
 }
 
-data_request($urls, $cache);
-$data = read_data($cache);
+if(file_exists($cache)){
+  $live_time = time() - fileatime($cache);
+};
+if(file_exists($cache) && $live_time > 43200){
+  data_request($urls, $cache);
+  $data = read_data($cache);
+} else {
+  $data = read_data($cache);
+}
 
 $usd_rate = substr($data[0]->query->results->rate[0]->Rate, 0, -2);
 $eur_rate = substr($data[0]->query->results->rate[1]->Rate, 0, -2);
