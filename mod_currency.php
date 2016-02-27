@@ -66,11 +66,10 @@ function read_data($cache){
   return $data;
 }
 
-
 if(file_exists($cache)){
   $live_time = time() - fileatime($cache);
 };
-if(file_exists($cache) && $live_time > 2){
+if(file_exists($cache) && $live_time > 43200){
   copy($cache, $cache_old);
   data_request($urls, $cache);
   $data = read_data($cache);
@@ -80,18 +79,18 @@ if(file_exists($cache) && $live_time > 2){
   $data_old = read_data($cache_old);
 }
 
-
-
 $usd_rate = substr($data[0]->query->results->rate[0]->Rate, 0, -2);
 $eur_rate = substr($data[0]->query->results->rate[1]->Rate, 0, -2);
 $temperature = round(($data[1]->query->results->channel->item->condition->temp - 32) / 1.8);
 $oil = $data[2]->query->results->quote->DaysLow;
 
-$usd_diff = 0;
-$eur_diff = 0;
-$oil_diff = 0;
+$usd_old_rate = substr($data_old[0]->query->results->rate[0]->Rate, 0, -2);
+$eur_old_rate = substr($data_old[0]->query->results->rate[1]->Rate, 0, -2);
+$oil_old = $data_old[2]->query->results->quote->DaysLow;
 
-
+$usd_diff = $usd_rate - $usd_old_rate;
+$eur_diff = $eur_rate - $eur_old_rate;
+$oil_diff = $oil - $oil_old;
 
 require(JmoduleHelper::getLayoutPath('mod_currency'));
 ?>
