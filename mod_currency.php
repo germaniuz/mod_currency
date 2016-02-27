@@ -4,7 +4,7 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 $urls = array(
   'https://query.yahooapis.com/v1/public/yql?q=select+Rate+from+yahoo.finance.xchange+where+pair+=+%22USDRUB,EURRUB%22&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=',
   'https://query.yahooapis.com/v1/public/yql?q=select%20item.condition.temp%20from%20weather.forecast%20where%20woeid%3D2124298%0A&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys',
-  'https://query.yahooapis.com/v1/public/yql?q=select%20DaysHigh%20from%20yahoo.finance.quote%20where%20symbol%20in%20(%22BZM16.NYM%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback='
+  'https://query.yahooapis.com/v1/public/yql?q=select%20DaysLow%20from%20yahoo.finance.quote%20where%20symbol%20in%20(%22BZM16.NYM%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback='
 );
 $cache = 'cache/rates.cache';
 
@@ -79,6 +79,7 @@ $usd_rate = substr($data[0]->query->results->rate[0]->Rate, 0, -2);
 $eur_rate = substr($data[0]->query->results->rate[1]->Rate, 0, -2);
 
 $temperature = round(($data[1]->query->results->channel->item->condition->temp - 32) / 1.8);
+$oil = $data[2]->query->results->quote->DaysLow;
 
 require(JmoduleHelper::getLayoutPath('mod_currency'));
 ?>
